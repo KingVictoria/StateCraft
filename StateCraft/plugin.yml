@@ -1,0 +1,9 @@
+name: StateCraft
+main: StateCraft
+version: 0.1
+author: kingvictoria
+commands: 
+  statecraft:
+    description: Help for StateCraft
+    usage: /sc help
+    aliases: sc
