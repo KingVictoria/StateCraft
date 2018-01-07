@@ -1,9 +1,12 @@
 package group;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+
+import main.StateCraft;
 
 public class Member implements Serializable {
 	
@@ -33,6 +36,14 @@ public class Member implements Serializable {
 	 */
 	public UUID getUUID() {
 		return id;
+	}
+	
+	/**
+	 * Gets the groups this Member is in
+	 * @return
+	 */
+	public ArrayList<Group> getGroups() {
+		return StateCraft.getInstance().getRelations().listGroups(this);
 	}
 	
 	/**

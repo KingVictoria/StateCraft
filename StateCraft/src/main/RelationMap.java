@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.entity.Player;
+
 import group.Group;
 import group.Member;
 
@@ -18,12 +20,14 @@ public class RelationMap implements Serializable {
 	private static final long serialVersionUID = 4890142365609441126L;
 	
 	private HashMap<Group, ArrayList<Member>> relations;
+	private ArrayList<Member> ungrouped;
 	
 	/**
 	 * Creates a RelationMap
 	 */
 	public RelationMap() {
 		relations = new HashMap<Group, ArrayList<Member>>();
+		ungrouped = new ArrayList<>();
 	}
 	
 	/**
@@ -49,6 +53,7 @@ public class RelationMap implements Serializable {
 	 */
 	public void addMember(Group group, Member member) {
 		if(!relations.get(group).contains(member)) relations.get(group).add(member);
+		if(ungrouped.contains(member)) ungrouped.remove(member);
 	}
 	
 	/**
@@ -58,6 +63,7 @@ public class RelationMap implements Serializable {
 	 */
 	public void removeMember(Group group, Member member) {
 		if(relations.get(group).contains(member)) relations.get(group).remove(member);
+		if(member.getGroups().size() == 0) ungrouped.add(member);
 	}
 	
 	/**
@@ -68,6 +74,19 @@ public class RelationMap implements Serializable {
 	 */
 	public boolean hasMember(Group group, Member member) {
 		return relations.get(group).contains(member);
+	}
+	
+	public boolean isMember(Player player) {
+		if(listAllMembers().contains(new Member(player.getUniqueId()))) return true;
+		return false;
+	}
+	
+	/**
+	 * Makes a member object for a player -- used upon first join
+	 * @param player
+	 */
+	public void makeMember(Player player) {
+		ungrouped.add(new Member(player.getUniqueId()));
 	}
 	
 	/**
@@ -104,6 +123,14 @@ public class RelationMap implements Serializable {
 	}
 	
 	/**
+	 * Returns an ArrayList of all Members not in any Groups
+	 * @return
+	 */
+	public ArrayList<Member> listUngrouped() {
+		return ungrouped;
+	}
+	
+	/**
 	 * Returns a list of All Members (all players, effectively)
 	 * @return
 	 */
@@ -112,16 +139,19 @@ public class RelationMap implements Serializable {
 		for(Group group: relations.keySet())
 			for(Member member: relations.get(group))
 				if(!members.contains(member)) members.add(member);
+		for(Member member: ungrouped) members.add(member);
 		return members;
 	}
 	
 	/**
-	 * Gets the Member object of a Player -- Creates one of there is none
+	 * Gets the Member object of a Player
 	 * @param uuid
 	 * @return
 	 */
 	public Member getMember(UUID uuid) {
 		for(Member member: listAllMembers())
+			if(member.getUUID().equals(uuid)) return member;
+		for(Member member: ungrouped)
 			if(member.getUUID().equals(uuid)) return member;
 		return new Member(uuid);
 	}
