@@ -1,16 +1,39 @@
 package group;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
 
-public class Group {
+import main.RelationMap;
+import main.StateCraft;
+
+public class Group implements Serializable {
+
+	private static final long serialVersionUID = 1352686046249094975L;
 	
-	private ArrayList<Member> members;
+	private String name;
 	
-	public Group(Player player) {
-		members = new ArrayList<Member>();
-		members.add(new Member(player.getUniqueId()));
+	public static RelationMap relations() {
+		return StateCraft.getInstance().getRelations();
+	}
+	
+	public Group(Player player, String name) {
+		relations().addGroup(this);
+		relations().addMember(this, relations().getMember(player.getUniqueId()));
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Gets the ArrayList of Member objects
+	 * @return ArrayList<Member>
+	 */
+	public ArrayList<Member> members() {
+		return relations().listMembers(this);
 	}
 
 }

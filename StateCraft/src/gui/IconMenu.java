@@ -65,12 +65,13 @@ public class IconMenu implements Listener {
    
     @EventHandler(priority=EventPriority.MONITOR)
     void onInventoryClick(InventoryClickEvent event) {
+    	
         if (event.getInventory().getTitle().equals(name)) {
             event.setCancelled(true);
             int slot = event.getRawSlot();
             if (slot >= 0 && slot < size && optionNames[slot] != null) {
                 Plugin plugin = this.plugin;
-                OptionClickEvent e = new OptionClickEvent((Player)event.getWhoClicked(), slot, optionNames[slot]);
+                OptionClickEvent e = new OptionClickEvent((Player)event.getWhoClicked(), slot, optionNames[slot], this);
                 handler.onOptionClick(e);
                 if (e.willClose()) {
                     final Player p = (Player)event.getWhoClicked();
@@ -97,13 +98,19 @@ public class IconMenu implements Listener {
         private String name;
         private boolean close;
         private boolean destroy;
+        private IconMenu menu;
        
-        public OptionClickEvent(Player player, int position, String name) {
+        public OptionClickEvent(Player player, int position, String name, final IconMenu menu) {
             this.player = player;
             this.position = position;
             this.name = name;
+            this.menu = menu;
             this.close = true;
             this.destroy = false;
+        }
+        
+        public IconMenu getMenu() {
+        	return menu;
         }
        
         public Player getPlayer() {

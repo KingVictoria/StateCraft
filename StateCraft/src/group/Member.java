@@ -1,10 +1,13 @@
 package group;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 
-public class Member {
+public class Member implements Serializable {
+	
+	private static final long serialVersionUID = 4989121208122118478L;
 	
 	private UUID id;
 	
@@ -39,6 +42,14 @@ public class Member {
 	 */
 	public boolean equals(Member member) {
 		if(member.id.equals(id)) return true;
+		return false;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof Member)) return false;
+		Member m = (Member) o;
+		if(m.getUUID().equals(id)) return true;
 		return false;
 	}
 	
